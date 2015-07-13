@@ -1,0 +1,5 @@
+/* in front */ int i;
+int j; /* back */
+// single line comment
+/*fadfaf
+adfadf*/int k;
