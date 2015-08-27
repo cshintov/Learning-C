@@ -117,7 +117,7 @@ int dis_callable(unsigned* pycbuf, int dealt, int size)
     int cur = start;
     while (!end_callable(pycbuf, cur) && !(cur >= size)) {
         if(!(callable(cur, pycbuf))) {
-            printf("%s", get_opname(optab, pycbuf[cur]));
+            printf("%-20s", get_opname(optab, pycbuf[cur]));
             if (have_arg(pycbuf[cur])) {
                 printf(" : %d\n", get_op_arg(pycbuf, cur));
                 cur += 3;
@@ -140,7 +140,7 @@ void print_assembly(unsigned* pycbuf, int cur, int size)
     int dealt = cur;
     while (!end(pycbuf, cur) && !(cur >= size)) {
         if(!(callable(cur, pycbuf))) {
-            printf("%s", get_opname(optab, pycbuf[cur]));
+            printf("%-20s", get_opname(optab, pycbuf[cur]));
             if (have_arg(pycbuf[cur])) {
                 printf(" : %d\n", get_op_arg(pycbuf, cur));
                 cur += 3;
