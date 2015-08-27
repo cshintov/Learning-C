@@ -90,6 +90,7 @@ void execute() {
             case 0x71:
                 cur = jump_absolute(cur);
                 break;
+
             case 0x78:
                 cur += 2;
                 break;
