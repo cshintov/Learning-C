@@ -2,7 +2,7 @@
  elementary python virtual machine  with arithmetic, logical operations
  and if-else statement, and while loop 
 */
-
+#include "opcodes.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,82 +20,87 @@ void execute() {
     while (cur < code.length) {
         opcode = get_element(&code, cur);
         switch(opcode) {
-            case 0x64: 
+            case LOAD_CONSTANT: 
                 load_const(cur);
                 cur += 2;
                 break;
 
-            case 0x65: 
+            case LOAD_NAME: 
                 load_name(cur);
                 cur += 2;
                 break;
 
-            case 0x5a:
+            case STORE_NAME:
                 store_name(cur);
                 cur += 2;
                 break;
                 
-            case 0x47:
+            case PRINT_ITEM:
                 print_item();
                 cur += 1;
                 break;
             
-            case 0x6b:
-                compare_op(cur);
-                cur += 2;
-                break;
-                
-            case 0x48:
+            case PRINT_NEWLINE:
                 print_newline();
                 cur += 1;
                 break;
 
-            case 0x17:
+            case COMPARE_OP:
+                compare_op(cur);
+                cur += 2;
+                break;
+                
+            case BINARY_ADD:
                 binary_add();
                 cur += 1;
                 break;
 
-            case 0x14:
+            case BINARY_MULTIPLY:
                 binary_multiply();
                 cur += 1;
                 break;
 
-            case 0x15:
+            case BINARY_DIVIDE:
                 binary_divide();
                 cur += 1;
                 break;
 
-            case 0x18:
+            case BINARY_SUBTRACT:
                 binary_subtract();
                 cur += 1;
                 break;
 
-            case 0x16:
+            case BINARY_MODULO:
                 binary_modulo();
                 cur += 1;
                 break;
             
-            case 0x72:
+            case POP_JUMP_IF_FALSE:
                 cur = pop_jump_if_false(cur);
                 break;
             
-            case 0x73:
+            case POP_JUMP_IF_TRUE:
                 cur = pop_jump_if_true(cur);
                 break;
             
-            case 0x6e:
+            case JUMP_FORWARD:
                 cur = jump_forward(cur);
                 break;
             
-            case 0x71:
+            case JUMP_ABSOLUTE:
                 cur = jump_absolute(cur);
                 break;
 
-            case 0x78:
+            case SETUP_LOOP:
                 cur += 2;
                 break;
 
-            case 0x57:
+            case POP_BLOCK:
+                cur += 1;
+                break;
+            
+            case UNARY_NOT:
+                unary_not();
                 cur += 1;
                 break;
 
@@ -131,7 +136,6 @@ int main(int argc, char** argv)
     printf("\nStarting Execution\n\n");    
     execute();    
     printf("\nEnd of execution!\n");
-    //test();    
     return 0;
 }
 

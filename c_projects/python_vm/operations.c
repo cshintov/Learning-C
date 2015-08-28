@@ -8,6 +8,13 @@ extern struct field names;
 extern struct field consts;
 extern struct field code; 
 
+
+void unary_not()
+{
+    int top = pop();
+    push(!top);
+}
+
 void load_const(int cur)
 {
     int oparg = 0;

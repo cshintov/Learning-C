@@ -1,8 +1,9 @@
 /* initializing data structures */
 #include <stdio.h>
-#include "utils.h"
 #include <stdlib.h>
 #include <string.h>
+#include "opcodes.h"
+#include "utils.h"
 
 extern struct node* optab;
 extern struct field names; 
@@ -95,7 +96,7 @@ int have_arg(unsigned opcode)
 int find_start(unsigned* pycbuf)
 {
     int i;
-    for(i = 0; pycbuf[i] != 0x73; i++)
+    for(i = 0; pycbuf[i] != TYPE_STRING; i++)
         ;
     return i+5;
 }
@@ -105,7 +106,7 @@ int find_start(unsigned* pycbuf)
  */
 int callable(int cur, unsigned* pycbuf)
 {
-    if (pycbuf[cur] == 0x64 && pycbuf[cur+3] == 0x84)
+    if (pycbuf[cur] == LOAD_CONSTANT && pycbuf[cur+3] == MAKE_FUNCTION)
         return TRUE;
     else
         return FALSE;
@@ -117,7 +118,7 @@ int compute_offset(unsigned* pycbuf, int cur, int target)
     int end = start + target;
     int offset = 0;
     int opcode = pycbuf[cur];
-    if (opcode == 0x6e)
+    if (opcode == JUMP_FORWARD)
         end = cur + 3 + target;
     else
         cur = start;
@@ -139,14 +140,14 @@ int get_op_arg(unsigned* pycbuf, int cur)
     int m = pycbuf[cur+2];
     int oparg = l | m << 8; 
     int opcode = pycbuf[cur];
-    if (opcode >= 0x6e && opcode <= 0x73)
+    if (opcode >= JUMP_FORWARD && opcode <= POP_JUMP_IF_TRUE)
         oparg = compute_offset(pycbuf, cur, oparg);
     return oparg;
 }
 
 int end(unsigned* pycbuf, int cur)
 {
-    if (pycbuf[cur] == 0x64 && pycbuf[cur+3] == 0x53)
+    if (pycbuf[cur] == LOAD_CONSTANT && pycbuf[cur+3] == RETURN_VALUE)
         return TRUE;
     else
         return FALSE;
@@ -156,7 +157,7 @@ int end(unsigned* pycbuf, int cur)
 int find_start_callable(unsigned* pycbuf, int dealt)
 {
     int i;
-    for(i = dealt; pycbuf[i] != 0x43; i++)
+    for(i = dealt; pycbuf[i] != FUNCTION_START; i++)
         ;
     return i+9;  
 }
@@ -194,8 +195,8 @@ int compute_const(unsigned* pycbuf, int cur)
 
 int get_consts(unsigned* pycbuf, int cur, int size)
 {
-    while(pycbuf[cur] != 0x28 && !(cur >= size)) {
-        if(pycbuf[cur] == 0x69) { 
+    while(pycbuf[cur] != TYPE_TUPLE && !(cur >= size)) {
+        if(pycbuf[cur] == TYPE_INTEGER) { 
             field_add(&consts, compute_const(pycbuf, cur));
             cur += 5;
         }
