@@ -114,7 +114,7 @@ void execute() {
 
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
+    if (argc != 2 && argv[1][strlen(argv[1])-1] != 'c') {
         printf("usage ./dis pycfile!\n");
         exit(1);
     }

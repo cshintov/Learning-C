@@ -1,7 +1,7 @@
 # checks whether num is prime; 1 for prime and 0 for not prime
 
 num = 5
-
+print num
 res = 1
 
 div = num - 1

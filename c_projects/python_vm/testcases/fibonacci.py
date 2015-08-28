@@ -4,7 +4,7 @@ first = 0
 second = 1
 
 num = 5
-
+print num
 if num == 0:
     print first
 

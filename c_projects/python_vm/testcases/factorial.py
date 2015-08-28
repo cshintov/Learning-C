@@ -1,5 +1,6 @@
 # computes factorial(num)
 num = 5
+print num
 fact = 1
 while num > 0:
     fact = fact * num
