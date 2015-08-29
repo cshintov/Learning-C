@@ -3,6 +3,7 @@ num = 2
 exp = 8
 print num
 print exp
+print
 power = 1
 
 while exp > 0:

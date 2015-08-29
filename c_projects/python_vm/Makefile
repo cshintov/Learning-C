@@ -1,7 +1,5 @@
-pyvm: pyvm.c optab.o utils.o stack.o operations.o init.o utils.h opcodes.h
-	cc -g pyvm.c optab.o utils.o stack.o operations.o init.o -o pyvm
-optab.o: optab.c utils.h
-	gcc -g -c optab.c 
+pyvm: pyvm.c utils.o stack.o operations.o init.o utils.h opcodes.h
+	cc -g pyvm.c utils.o stack.o operations.o init.o -o pyvm
 utils.o: utils.c utils.h
 	gcc -g -c utils.c
 stack.o: stack.c

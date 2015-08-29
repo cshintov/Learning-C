@@ -5,7 +5,6 @@
 #include "opcodes.h"
 #include "utils.h"
 
-extern struct node* optab;
 extern struct field names; 
 extern struct field consts;
 extern struct field code; 

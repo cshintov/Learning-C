@@ -2,10 +2,12 @@
 
 x = 16
 y = 40
-a = x;
-b = y;
 print x
 print y
+print
+a = x;
+b = y;
+
 while (b != 0):
     t = b;
     b = a % b;

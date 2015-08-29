@@ -9,7 +9,6 @@
 #include <string.h>
 
 
-struct node* optab;
 struct field names = {{0}, 0};
 struct field consts = {{0}, 0};
 struct field code = {{0}, 0};
@@ -114,7 +113,7 @@ void execute() {
 
 int main(int argc, char** argv)
 {
-    if (argc != 2 && argv[1][strlen(argv[1])-1] != 'c') {
+    if (argc != 2) {
         printf("usage ./dis pycfile!\n");
         exit(1);
     }
@@ -126,8 +125,6 @@ int main(int argc, char** argv)
     /* read pyc file into pycbuf integer array */
     size = read_pyc(pycfile, pycbuf);
 
-    /* constructing the opcode : opname table */
-    optab = create_optab("opcodes.txt");
     cur = find_start(pycbuf); /* find start of the code */
     
     /* getting the co_code, co_consts and co_names */

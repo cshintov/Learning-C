@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-extern struct node* optab;
 extern struct field names; 
 extern struct field consts;
 extern struct field code; 

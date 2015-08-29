@@ -33,12 +33,6 @@ void insert_left(struct node* ptree, unsigned int data, char *s);
 void insert_right(struct node* ptree, unsigned int data, char *s);
 struct node* new_node(unsigned int data, char* string);
 
-/* optab utilities */
-
-struct node* create_optab(char* filename);
-char* get_opname(struct node* optab, unsigned int opcode);
-
-
 /* stack functions */
 
 void push(int data);
