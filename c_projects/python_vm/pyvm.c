@@ -138,8 +138,8 @@ void execute(struct code_obj* pobj) {
 
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
-        printf("usage ./dis pycfile!\n");
+    if (argc != 2 || strcmp((&pycfile[strlen(pycfile)-4]), ".pyc") != 0) {
+        printf("usage ./dis name.pyc!\n");
         exit(1);
     }
     
