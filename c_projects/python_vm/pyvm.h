@@ -8,14 +8,7 @@
 #define NUM 4
 #define HAVE_ARG 90
 #define MAXPYC 5000
-/*
-struct node {
-    unsigned int data;
-    char opname[20];
-    struct node*  left;
-    struct node* right;
-};
-*/
+
 struct field {
     int val[MAXVAL];
     int length;    

@@ -1,6 +1,6 @@
 /*
  elementary python virtual machine  with arithmetic, logical operations
- and if-else statement, and while loop 
+ and if-else statement, and while loop with function handling 
 */
 #include "opcodes.h"
 #include "pyvm.h"
