@@ -153,11 +153,9 @@ int main(int argc, char** argv)
     
     /* find start of the code */
     start = find_start(pycbuf, 0);
-    //printf("%c start of the code %d\n", pycbuf[start], start);
     
     /* getting the co_code, co_consts and co_names */
     int namei = get_fields(pycbuf, pcode_o, start, size);
-    //printf("the name of the code obj is :%s\n", objects[namei]->name);
 
     printf("\nStarting Execution\n\n");    
     execute(pcode_o);    
