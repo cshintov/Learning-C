@@ -49,9 +49,9 @@ void execute_redir(char** argv, char* redirections)
             if (pip_read) {   /* set read from pipe */
                 if (pips[prvpp][0] != STDIN_FILENO) {
                     if (dup2(pips[prvpp][0], STDIN_FILENO) == -1)
-                        error("dup2 2");
+                        error("making pipe read end the stdin");
                     if (close(pips[prvpp][0]) == -1)
-                        error("close 4");
+                        error("closing the redundant fd");
                 }
             }
             if (typ == PIPE && pip_write) {  /* setup pipe write */
@@ -59,9 +59,9 @@ void execute_redir(char** argv, char* redirections)
                     error("closing read end of writer");
                 if (pips[nxtpp][1] != STDOUT_FILENO) {
                     if (dup2(pips[nxtpp][1], STDOUT_FILENO) == -1)
-                        error("dup2 1");
+                        error("making pipe write end the stdout");
                     if (close(pips[nxtpp][1]) == -1)
-                        error("close 2");
+                        error("closing the redundant fd");
                 }
             }
             err = execvp(comm[0], comm);
