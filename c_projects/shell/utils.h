@@ -1,5 +1,5 @@
 #define MAXSIZE 50
-#define REDSIZE 20
+#define REDSIZE 50
 #define TRUE 1
 #define FALSE 0
 #define IN_RED '<'
@@ -9,4 +9,4 @@
 char* get_str(char *s, int size);
 char** get_argv(char *s);
 char* get_redirections(char* s);
-char** get_comm(char** argv);
+char** get_comm(char** argv, int idx);

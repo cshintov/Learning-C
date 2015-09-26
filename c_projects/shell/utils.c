@@ -4,7 +4,13 @@
 #include <assert.h>
 #include <fcntl.h>
 #include "utils.h"
+#include <unistd.h>
 
+void error(char *s)
+{
+    printf("Error:%s\n",s);
+    exit(EXIT_FAILURE);
+}
 void strip_newline(char *s)
 {
     char* pos;
@@ -58,9 +64,10 @@ char** split(char *s)
     return argv;
 }
 
-void print_argv(char** argv, int n)
+void print_argv(char** argv)
 {
-    while(n--)
+    printf("printing the command list\n");
+    while(*argv != NULL)
         printf("%s\n", *(argv++));
 }
 
@@ -74,6 +81,7 @@ char* get_redirections(char* s)
     char* reds  = malloc(REDSIZE);
     char* cur =  reds;
     int in_quot = FALSE;
+    *(cur++) = '*';
     while(*s != '\0') {
         
         if (*s == '\'' || *s =='\"')
@@ -89,11 +97,12 @@ char* get_redirections(char* s)
         s++;
     
     }
+    *(cur++) = '*';
     *cur = '\0';
     return reds;
 }
 
-int which_redir(char* c) 
+int typeof_redir(char* c) 
 {
     if (c == NULL)
         return NONE;
@@ -101,66 +110,127 @@ int which_redir(char* c)
         return IN_RED;
     else if (*c == '>')
         return OUT_RED;
-    else if (*c == '|')
+    else if (*c == '|'){
         return PIPE;
+    }
     return NONE;
 }
 
-int find_redir(char** argv)
+int type(char** argv, int idx)
 {
-    int idx = 0;
-    while(argv[idx] != NULL) {
-        if (which_redir(argv[idx]) != NONE)
+    if (idx == -1)
+        return NONE;
+    return typeof_redir(argv[idx]);
+}
+
+int next_redir(char** argv, int idx)
+{
+    if (type(argv, idx) != NONE)
+        idx++;
+    while (argv[idx] != NULL) {
+        if (type(argv,idx) != NONE)
             return idx;
         idx++;
     }
     return idx;
 }
 
-
-void setup_input_red(char* file)
+int prev_redir(char** argv, int idx)
 {
+    while (idx > 0) {
+        if (type(argv, idx-1) != NONE)
+            return idx-1;
+        idx--;
+    }
+    if (type(argv, idx) == NONE)
+        idx = -1;
+    return idx;
+}
+
+void get_rw(int* rw, char** argv, int idx)
+{
+    if (idx == 0)
+        rw[0] = idx;
+    else 
+        rw[0] = prev_redir(argv, idx);
+    rw[1] = 1;
+    printf("%d read, write %d\n", rw[0], rw[1]);
+}
+
+int setup_pipe(int* pfd)
+{
+    if(pipe(pfd) == -1) {
+        printf("Error: pipe\n");
+        return FALSE;
+    }
+    return TRUE;
+}
+
+
+int setup_input_red(char* file)
+{
+    printf("set in %s\n", file);
     int fd;
     if((fd = open(file, O_RDONLY, 0644)) < 0) {
         printf("error:couldn't open %s", file);
-        exit(EXIT_FAILURE);
+        return FALSE;
     } else {
-        dup2(fd, 0);
+        if(dup2(fd, 0) == -1)
+            error("error dup2 set in\n");;
     }
+    return TRUE;
 }
 
-void setup_output_red(char* file)
+int setup_output_red(char* file)
 {
+    printf("set out %s\n", file);
     int fd;
     if((fd = open(file, O_CREAT|O_TRUNC|O_WRONLY, 0644)) < 0) {
         printf("error:couldn't open %s", file);
-        exit(EXIT_FAILURE);
+        return FALSE;
     } else {
-        close(1);
         dup2(fd, 1);
     }
+    return TRUE;
 }
 
-void setup_redir(char** argv, int idx)
+int setup_redir(char** argv, int idx, int* pfd)
 {
-    int type = which_redir(argv[idx]);
-    if (type == IN_RED)
-        setup_input_red(argv[idx+1]);
-    else if (type == OUT_RED)
-        setup_output_red(argv[idx+1]);
+    int typ = type(argv, idx);
+    if (typ == PIPE)
+        return setup_pipe(pfd);
+    if (typ == IN_RED)
+        return setup_input_red(argv[idx+1]);
+    else if (typ == OUT_RED)
+        return setup_output_red(argv[idx+1]);
+    return TRUE;
 }
 
 
-char** get_comm(char** argv)
+char** get_comm(char** argv, int nxt)
 {
-    char** targv = malloc(sizeof targv * MAXSIZE);
-    int i = 0;
-    while(*argv != NULL) {
-        if (**argv == IN_RED || **argv == OUT_RED)
-            argv += 2;
-        else
-            targv[i++] = *(argv++);
-    }
-    targv[i] = NULL;
-    return targv;
+    if (argv[nxt] == NULL)
+        return argv;
+    char redir = *argv[nxt];
+    int count = 0;
+    char** temp = argv;
+    while(*temp != NULL && **(temp++) != redir)
+        count++;
+    char** comm = malloc(count+1 * sizeof comm);
+    temp = comm;
+    while(*argv != NULL && **argv != redir)
+        *(temp++) = *(argv++);
+    *temp = NULL;
+    return comm;
+}
+
+int mymain(int argc, char** argv)
+{
+    char s[100];
+    printf("%s\n",get_str(s,sizeof(s)));
+    argv = get_argv(s);
+    int idx = next_redir(argv, 2);
+    printf("%d\n", idx);
+    get_comm(argv, NONE);
+    return 0;
 }
